@@ -123,7 +123,7 @@ export default function ExpenseExpert() {
     };
 
     return (
-        <div className="min-h-screen pt-20">
+        <div className="min-h-screen pt-16">
             {/* Hero Section */}
             <section className="relative py-20 overflow-hidden">
                 <div className="absolute inset-0 gradient-bg">
