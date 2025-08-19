@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, TrendingUp, TrendingDown, DollarSign, PieChart, Calendar, Target, Settings, BarChart3, Coffee, Car, ShoppingBag, Film, Home, FileText, Utensils, MessageSquare, Send, Bot, User, X } from "lucide-react";
+import { Plus, TrendingUp, TrendingDown, DollarSign, PieChart, Calendar, Target, Settings, BarChart3, Coffee, Car, ShoppingBag, Film, Home, FileText, Utensils, MessageSquare, Send, Bot, User, X, ChevronDown, ChevronUp } from "lucide-react";
 
 // Define types for better TypeScript support
 interface ToolCall {
@@ -35,6 +35,7 @@ export default function ExpenseExpert() {
     const [isLoading, setIsLoading] = useState(false);
     const [baseUrl, setBaseUrl] = useState("http://localhost:3000");
     const [toolResults, setToolResults] = useState<any[]>([]);
+    const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
     const chatMessagesEndRef = useRef<HTMLDivElement>(null);
     const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -47,6 +48,91 @@ export default function ExpenseExpert() {
             });
         }
     }, [chatMessages]);
+
+    const toggleCardExpansion = (cardId: string) => {
+        setExpandedCards(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(cardId)) {
+                newSet.delete(cardId);
+            } else {
+                newSet.add(cardId);
+            }
+            return newSet;
+        });
+    };
+
+    const expandAllCards = () => {
+        const allCardIds = toolResults.map(result => result.id);
+        setExpandedCards(new Set(allCardIds));
+    };
+
+    const collapseAllCards = () => {
+        setExpandedCards(new Set());
+    };
+
+    // Color palette for cards
+    const cardColors = [
+        {
+            bg: 'bg-blue-50 dark:bg-blue-950/30',
+            border: 'border-blue-200 dark:border-blue-800/50',
+            accent: 'blue',
+            dot: 'bg-blue-500',
+            text: 'text-blue-700 dark:text-blue-300'
+        },
+        {
+            bg: 'bg-green-50 dark:bg-green-950/30',
+            border: 'border-green-200 dark:border-green-800/50',
+            accent: 'green',
+            dot: 'bg-green-500',
+            text: 'text-green-700 dark:text-green-300'
+        },
+        {
+            bg: 'bg-purple-50 dark:bg-purple-950/30',
+            border: 'border-purple-200 dark:border-purple-800/50',
+            accent: 'purple',
+            dot: 'bg-purple-500',
+            text: 'text-purple-700 dark:text-purple-300'
+        },
+        {
+            bg: 'bg-orange-50 dark:bg-orange-950/30',
+            border: 'border-orange-200 dark:border-orange-800/50',
+            accent: 'orange',
+            dot: 'bg-orange-500',
+            text: 'text-orange-700 dark:text-orange-300'
+        },
+        {
+            bg: 'bg-pink-50 dark:bg-pink-950/30',
+            border: 'border-pink-200 dark:border-pink-800/50',
+            accent: 'pink',
+            dot: 'bg-pink-500',
+            text: 'text-pink-700 dark:text-pink-300'
+        },
+        {
+            bg: 'bg-cyan-50 dark:bg-cyan-950/30',
+            border: 'border-cyan-200 dark:border-cyan-800/50',
+            accent: 'cyan',
+            dot: 'bg-cyan-500',
+            text: 'text-cyan-700 dark:text-cyan-300'
+        },
+        {
+            bg: 'bg-yellow-50 dark:bg-yellow-950/30',
+            border: 'border-yellow-200 dark:border-yellow-800/50',
+            accent: 'yellow',
+            dot: 'bg-yellow-500',
+            text: 'text-yellow-700 dark:text-yellow-300'
+        },
+        {
+            bg: 'bg-indigo-50 dark:bg-indigo-950/30',
+            border: 'border-indigo-200 dark:border-indigo-800/50',
+            accent: 'indigo',
+            dot: 'bg-indigo-500',
+            text: 'text-indigo-700 dark:text-indigo-300'
+        }
+    ];
+
+    const getCardColor = (index: number) => {
+        return cardColors[index % cardColors.length];
+    };
 
     const handleSendMessage = async () => {
         if (!chatInput.trim()) return;
@@ -377,16 +463,36 @@ export default function ExpenseExpert() {
                                         </CardTitle>
                                         <CardDescription>Kết quả từ AI tool calls</CardDescription>
                                     </div>
-                                    {toolResults.length > 0 && (
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setToolResults([])}
-                                            className="text-xs border-primary/20 hover:bg-primary/5"
-                                        >
-                                            Clear
-                                        </Button>
-                                    )}
+                                    <div className="flex items-center gap-2">
+                                        {toolResults.length > 0 && (
+                                            <>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={expandedCards.size === toolResults.length ? collapseAllCards : expandAllCards}
+                                                    className="text-xs border-primary/20 hover:bg-primary/5 px-2"
+                                                    title={expandedCards.size === toolResults.length ? "Collapse All" : "Expand All"}
+                                                >
+                                                    {expandedCards.size === toolResults.length ? (
+                                                        <ChevronUp className="w-4 h-4" />
+                                                    ) : (
+                                                        <ChevronDown className="w-4 h-4" />
+                                                    )}
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setToolResults([]);
+                                                        setExpandedCards(new Set());
+                                                    }}
+                                                    className="text-xs border-primary/20 hover:bg-primary/5"
+                                                >
+                                                    Clear
+                                                </Button>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             </CardHeader>
                             <CardContent>
@@ -398,97 +504,117 @@ export default function ExpenseExpert() {
                                             <p className="text-xs mt-1">Tool results sẽ hiển thị ở đây</p>
                                         </div>
                                     ) : (
-                                        toolResults.map((result) => (
-                                            <Card key={result.id} className="border border-primary/10 bg-background/50">
-                                                <CardHeader className="pb-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <CardTitle className="text-sm font-medium flex items-center gap-2">
-                                                            <div className="w-2 h-2 bg-primary rounded-full"></div>
-                                                            {result.toolName}
-                                                        </CardTitle>
-                                                        <span className="text-xs text-muted-foreground">{result.timestamp}</span>
-                                                    </div>
-                                                    <CardDescription className="text-xs">{result.type}</CardDescription>
-                                                </CardHeader>
-                                                <CardContent className="pt-0">
-                                                    {/* Tool Information */}
-                                                    <div className="mb-3 p-2 bg-primary/5 rounded-lg border border-primary/10">
-                                                        <div className="flex items-center justify-between mb-2">
-                                                            <span className="text-xs font-medium text-primary">Tool Name</span>
-                                                            <span className="text-xs font-mono">{result.data.name}</span>
-                                                        </div>
+                                        toolResults.map((result, index) => {
+                                            const isExpanded = expandedCards.has(result.id);
+                                            const cardColor = getCardColor(index);
+                                            return (
+                                                <Card key={result.id} className={`${cardColor.border} ${cardColor.bg} hover:shadow-md transition-all duration-200`}>
+                                                    <CardHeader className="pb-2">
                                                         <div className="flex items-center justify-between">
-                                                            <span className="text-xs font-medium text-primary">Tool ID</span>
-                                                            <span className="text-xs font-mono text-muted-foreground">{result.data.id}</span>
+                                                            <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                                                <div className={`w-2 h-2 ${cardColor.dot} rounded-full`}></div>
+                                                                <span className={cardColor.text}>{result.toolName}</span>
+                                                            </CardTitle>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-xs text-muted-foreground">{result.timestamp}</span>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    onClick={() => toggleCardExpansion(result.id)}
+                                                                    className={`h-6 w-6 p-0 hover:bg-${cardColor.accent}-500/10`}
+                                                                >
+                                                                    {isExpanded ? (
+                                                                        <ChevronUp className="w-3 h-3" />
+                                                                    ) : (
+                                                                        <ChevronDown className="w-3 h-3" />
+                                                                    )}
+                                                                </Button>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    </CardHeader>
+                                                    <CardContent className="pt-0">
+                                                        {/* Compact View - Always Visible */}
+                                                        <div className={`mb-3 p-2 bg-${cardColor.accent}-500/5 rounded-lg border border-${cardColor.accent}-500/10`}>
+                                                            {/* Quick preview of arguments count */}
+                                                            {result.data.arguments && (
+                                                                <div className="text-xs text-muted-foreground">
+                                                                    {Object.keys(result.data.arguments).length} argument(s)
+                                                                </div>
+                                                            )}
+                                                        </div>
 
-                                                    {/* Arguments Content */}
-                                                    {result.data.arguments && (
-                                                        <div className="space-y-3">
-                                                            <h4 className="text-xs font-semibold text-foreground">Arguments:</h4>
-                                                            {Object.entries(result.data.arguments).map(([key, value]) => (
-                                                                <div key={key} className="space-y-2">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <div className="w-1 h-4 bg-primary rounded-full"></div>
-                                                                        <span className="text-sm font-medium capitalize">{key}</span>
-                                                                    </div>
+                                                        {/* Expanded View - Conditionally Visible */}
+                                                        {isExpanded && (
+                                                            <div className="space-y-3">
+                                                                {/* Arguments Content */}
+                                                                {result.data.arguments && (
+                                                                    <div className="space-y-3">
+                                                                        <h4 className="text-xs font-semibold text-foreground">Arguments:</h4>
+                                                                        {Object.entries(result.data.arguments).map(([key, value]) => (
+                                                                            <div key={key} className="space-y-2">
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <div className={`w-1 h-4 bg-${cardColor.accent}-500 rounded-full`}></div>
+                                                                                    <span className="text-sm font-medium capitalize">{key}</span>
+                                                                                </div>
 
-                                                                    {Array.isArray(value) ? (
-                                                                        <div className="ml-3 space-y-2">
-                                                                            {value.map((item, index) => (
-                                                                                <div key={index} className="bg-muted/30 rounded-lg p-3 border border-white/5">
-                                                                                    <div className="text-xs text-muted-foreground mb-2">Item {index + 1}</div>
-                                                                                    {typeof item === 'object' ? (
+                                                                                {Array.isArray(value) ? (
+                                                                                    <div className="ml-3 space-y-2">
+                                                                                        {value.map((item, index) => (
+                                                                                            <div key={index} className={`bg-${cardColor.accent}-500/5 rounded-lg p-3 border border-${cardColor.accent}-500/10`}>
+                                                                                                <div className="text-xs text-muted-foreground mb-2">Item {index + 1}</div>
+                                                                                                {typeof item === 'object' ? (
+                                                                                                    <div className="space-y-1">
+                                                                                                        {Object.entries(item).map(([itemKey, itemValue]) => (
+                                                                                                            <div key={itemKey} className="flex justify-between items-center">
+                                                                                                                <span className="text-xs text-muted-foreground capitalize">{itemKey}:</span>
+                                                                                                                <span className="text-sm font-mono">{String(itemValue)}</span>
+                                                                                                            </div>
+                                                                                                        ))}
+                                                                                                    </div>
+                                                                                                ) : (
+                                                                                                    <span className="text-sm font-mono">{String(item)}</span>
+                                                                                                )}
+                                                                                            </div>
+                                                                                        ))}
+                                                                                    </div>
+                                                                                ) : typeof value === 'object' && value !== null ? (
+                                                                                    <div className={`ml-3 bg-${cardColor.accent}-500/5 rounded-lg p-3 border border-${cardColor.accent}-500/10`}>
                                                                                         <div className="space-y-1">
-                                                                                            {Object.entries(item).map(([itemKey, itemValue]) => (
-                                                                                                <div key={itemKey} className="flex justify-between items-center">
-                                                                                                    <span className="text-xs text-muted-foreground capitalize">{itemKey}:</span>
-                                                                                                    <span className="text-sm font-mono">{String(itemValue)}</span>
+                                                                                            {Object.entries(value).map(([objKey, objValue]) => (
+                                                                                                <div key={objKey} className="flex justify-between items-center">
+                                                                                                    <span className="text-xs text-muted-foreground capitalize">{objKey}:</span>
+                                                                                                    <span className="text-sm font-mono">{String(objValue)}</span>
                                                                                                 </div>
                                                                                             ))}
                                                                                         </div>
-                                                                                    ) : (
-                                                                                        <span className="text-sm font-mono">{String(item)}</span>
-                                                                                    )}
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-                                                                    ) : typeof value === 'object' && value !== null ? (
-                                                                        <div className="ml-3 bg-muted/30 rounded-lg p-3 border border-white/5">
-                                                                            <div className="space-y-1">
-                                                                                {Object.entries(value).map(([objKey, objValue]) => (
-                                                                                    <div key={objKey} className="flex justify-between items-center">
-                                                                                        <span className="text-xs text-muted-foreground capitalize">{objKey}:</span>
-                                                                                        <span className="text-sm font-mono">{String(objValue)}</span>
                                                                                     </div>
-                                                                                ))}
+                                                                                ) : (
+                                                                                    <div className={`ml-3 bg-${cardColor.accent}-500/5 rounded-lg p-2 border border-${cardColor.accent}-500/10`}>
+                                                                                        <span className="text-sm font-mono">{String(value)}</span>
+                                                                                    </div>
+                                                                                )}
                                                                             </div>
-                                                                        </div>
-                                                                    ) : (
-                                                                        <div className="ml-3 bg-muted/30 rounded-lg p-2 border border-white/5">
-                                                                            <span className="text-sm font-mono">{String(value)}</span>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )}
+                                                                        ))}
+                                                                    </div>
+                                                                )}
 
-                                                    {/* Raw JSON (collapsible) */}
-                                                    <details className="mt-4">
-                                                        <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
-                                                            Raw JSON Data
-                                                        </summary>
-                                                        <div className="mt-2 bg-muted/30 rounded-lg p-3 border border-white/5">
-                                                            <pre className="text-xs overflow-x-auto whitespace-pre-wrap font-mono">
-                                                                {JSON.stringify(result.data, null, 2)}
-                                                            </pre>
-                                                        </div>
-                                                    </details>
-                                                </CardContent>
-                                            </Card>
-                                        ))
+                                                                {/* Raw JSON (collapsible) */}
+                                                                <details className="mt-4">
+                                                                    <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+                                                                        Raw JSON Data
+                                                                    </summary>
+                                                                    <div className={`mt-2 bg-${cardColor.accent}-500/5 rounded-lg p-3 border border-${cardColor.accent}-500/10`}>
+                                                                        <pre className="text-xs overflow-x-auto whitespace-pre-wrap font-mono">
+                                                                            {JSON.stringify(result.data, null, 2)}
+                                                                        </pre>
+                                                                    </div>
+                                                                </details>
+                                                            </div>
+                                                        )}
+                                                    </CardContent>
+                                                </Card>
+                                            )
+                                        })
                                     )}
                                 </div>
                             </CardContent>
