@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,18 @@ export default function ExpenseExpert() {
     ]);
     const [isLoading, setIsLoading] = useState(false);
     const [baseUrl, setBaseUrl] = useState("http://localhost:3000");
+    const chatMessagesEndRef = useRef<HTMLDivElement>(null);
+    const chatContainerRef = useRef<HTMLDivElement>(null);
+
+    // Auto scroll to bottom when new messages arrive
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTo({
+                top: chatContainerRef.current.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    }, [chatMessages]);
 
     const handleSendMessage = async () => {
         if (!chatInput.trim()) return;
@@ -210,7 +222,11 @@ export default function ExpenseExpert() {
                             </CardHeader>
                             <CardContent className="flex flex-col h-full">
                                 {/* Chat Messages */}
-                                <div className="max-h-[60vh] overflow-y-auto mb-4 p-4 glass-effect border border-white/10 rounded-lg space-y-3 flex-1">
+                                <div
+                                    ref={chatContainerRef}
+                                    className="max-h-[60vh] overflow-y-auto mb-4 p-4 glass-effect border border-white/10 rounded-lg space-y-3 flex-1 scroll-smooth"
+                                    style={{ scrollBehavior: 'smooth' }}
+                                >
                                     {chatMessages.map((msg) => (
                                         <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                                             {msg.type === 'ai' && (
@@ -268,6 +284,8 @@ export default function ExpenseExpert() {
                                             </div>
                                         </div>
                                     )}
+                                    {/* Auto scroll anchor */}
+                                    <div ref={chatMessagesEndRef} />
                                 </div>
 
                                 {/* Chat Input */}
