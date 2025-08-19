@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, TrendingUp, TrendingDown, DollarSign, PieChart, Calendar, Target, Settings, BarChart3, Coffee, Car, ShoppingBag, Film, Home, FileText, Utensils, MessageSquare, Send, Bot, User } from "lucide-react";
+import { Plus, TrendingUp, TrendingDown, DollarSign, PieChart, Calendar, Target, Settings, BarChart3, Coffee, Car, ShoppingBag, Film, Home, FileText, Utensils, MessageSquare, Send, Bot, User, X } from "lucide-react";
 
 // Define types for better TypeScript support
 interface ToolCall {
@@ -34,6 +34,7 @@ export default function ExpenseExpert() {
     ]);
     const [isLoading, setIsLoading] = useState(false);
     const [baseUrl, setBaseUrl] = useState("http://localhost:3000");
+    const [toolResults, setToolResults] = useState<any[]>([]);
     const chatMessagesEndRef = useRef<HTMLDivElement>(null);
     const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -105,6 +106,60 @@ export default function ExpenseExpert() {
 
             setChatMessages(prev => [...prev, aiResponse]);
 
+            // Process tool calls and extract JSON data for cards
+            if (data.toolCalls && data.toolCalls.length > 0) {
+                const extractedResults: any[] = [];
+
+                // Only create separate cards if there are multiple tool calls
+                if (data.toolCalls.length > 1) {
+                    // Multiple tool calls - each gets its own card
+                    data.toolCalls.forEach((tool: ToolCall, index: number) => {
+                        extractedResults.push({
+                            id: `${tool.id}-${index}`,
+                            toolName: tool.name,
+                            type: 'Tool Call Result',
+                            data: {
+                                name: tool.name,
+                                arguments: tool.arguments,
+                                id: tool.id
+                            },
+                            timestamp: new Date().toLocaleTimeString()
+                        });
+                    });
+                } else if (data.toolCalls.length === 1) {
+                    // Single tool call - check if it has multiple items in arguments
+                    const tool = data.toolCalls[0];
+                    let hasMultipleItems = false;
+
+                    // Check if any argument contains an array with multiple items
+                    if (tool.arguments) {
+                        Object.values(tool.arguments).forEach(value => {
+                            if (Array.isArray(value) && value.length > 1) {
+                                hasMultipleItems = true;
+                            }
+                        });
+                    }
+
+                    if (hasMultipleItems) {
+                        // Single tool with multiple items - create one card with all content
+                        extractedResults.push({
+                            id: tool.id,
+                            toolName: tool.name,
+                            type: 'Tool Call Result',
+                            data: {
+                                name: tool.name,
+                                arguments: tool.arguments,
+                                id: tool.id
+                            },
+                            timestamp: new Date().toLocaleTimeString()
+                        });
+                    }
+                    // If single tool with single items, don't create cards
+                }
+
+                setToolResults(extractedResults);
+            }
+
         } catch (error) {
             console.error('API call failed:', error);
 
@@ -158,7 +213,7 @@ export default function ExpenseExpert() {
 
             <div className="container mx-auto px-6 pb-12">
                 {/* AI Chat Assistant - New Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
+                <div className="grid grid-cols-1 lg:grid-cols-6 gap-6 mb-8">
                     {/* Left Column: Settings & Quick Suggestions */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* API Configuration */}
@@ -210,7 +265,7 @@ export default function ExpenseExpert() {
                         </Card>
                     </div>
 
-                    {/* Right Column: Chat Interface */}
+                    {/* Center Column: Chat Interface */}
                     <div className="lg:col-span-3">
                         <Card className="glass-effect border border-primary/20 hover-lift h-full">
                             <CardHeader>
@@ -305,6 +360,136 @@ export default function ExpenseExpert() {
                                     >
                                         <Send className="w-4 h-4" />
                                     </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Right Column: Tool Results */}
+                    <div className="lg:col-span-2">
+                        <Card className="glass-effect border border-primary/20 hover-lift h-full">
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <CardTitle className="flex items-center gap-2 font-mono">
+                                            <Settings className="w-5 h-5 text-primary" />
+                                            Tool Results
+                                        </CardTitle>
+                                        <CardDescription>Kết quả từ AI tool calls</CardDescription>
+                                    </div>
+                                    {toolResults.length > 0 && (
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setToolResults([])}
+                                            className="text-xs border-primary/20 hover:bg-primary/5"
+                                        >
+                                            Clear
+                                        </Button>
+                                    )}
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="max-h-[60vh] overflow-y-auto space-y-4 scroll-smooth">
+                                    {toolResults.length === 0 ? (
+                                        <div className="text-center text-muted-foreground py-8">
+                                            <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                            <p className="text-sm">Chưa có kết quả tool nào</p>
+                                            <p className="text-xs mt-1">Tool results sẽ hiển thị ở đây</p>
+                                        </div>
+                                    ) : (
+                                        toolResults.map((result) => (
+                                            <Card key={result.id} className="border border-primary/10 bg-background/50">
+                                                <CardHeader className="pb-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                                            <div className="w-2 h-2 bg-primary rounded-full"></div>
+                                                            {result.toolName}
+                                                        </CardTitle>
+                                                        <span className="text-xs text-muted-foreground">{result.timestamp}</span>
+                                                    </div>
+                                                    <CardDescription className="text-xs">{result.type}</CardDescription>
+                                                </CardHeader>
+                                                <CardContent className="pt-0">
+                                                    {/* Tool Information */}
+                                                    <div className="mb-3 p-2 bg-primary/5 rounded-lg border border-primary/10">
+                                                        <div className="flex items-center justify-between mb-2">
+                                                            <span className="text-xs font-medium text-primary">Tool Name</span>
+                                                            <span className="text-xs font-mono">{result.data.name}</span>
+                                                        </div>
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-xs font-medium text-primary">Tool ID</span>
+                                                            <span className="text-xs font-mono text-muted-foreground">{result.data.id}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Arguments Content */}
+                                                    {result.data.arguments && (
+                                                        <div className="space-y-3">
+                                                            <h4 className="text-xs font-semibold text-foreground">Arguments:</h4>
+                                                            {Object.entries(result.data.arguments).map(([key, value]) => (
+                                                                <div key={key} className="space-y-2">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div className="w-1 h-4 bg-primary rounded-full"></div>
+                                                                        <span className="text-sm font-medium capitalize">{key}</span>
+                                                                    </div>
+
+                                                                    {Array.isArray(value) ? (
+                                                                        <div className="ml-3 space-y-2">
+                                                                            {value.map((item, index) => (
+                                                                                <div key={index} className="bg-muted/30 rounded-lg p-3 border border-white/5">
+                                                                                    <div className="text-xs text-muted-foreground mb-2">Item {index + 1}</div>
+                                                                                    {typeof item === 'object' ? (
+                                                                                        <div className="space-y-1">
+                                                                                            {Object.entries(item).map(([itemKey, itemValue]) => (
+                                                                                                <div key={itemKey} className="flex justify-between items-center">
+                                                                                                    <span className="text-xs text-muted-foreground capitalize">{itemKey}:</span>
+                                                                                                    <span className="text-sm font-mono">{String(itemValue)}</span>
+                                                                                                </div>
+                                                                                            ))}
+                                                                                        </div>
+                                                                                    ) : (
+                                                                                        <span className="text-sm font-mono">{String(item)}</span>
+                                                                                    )}
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    ) : typeof value === 'object' && value !== null ? (
+                                                                        <div className="ml-3 bg-muted/30 rounded-lg p-3 border border-white/5">
+                                                                            <div className="space-y-1">
+                                                                                {Object.entries(value).map(([objKey, objValue]) => (
+                                                                                    <div key={objKey} className="flex justify-between items-center">
+                                                                                        <span className="text-xs text-muted-foreground capitalize">{objKey}:</span>
+                                                                                        <span className="text-sm font-mono">{String(objValue)}</span>
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="ml-3 bg-muted/30 rounded-lg p-2 border border-white/5">
+                                                                            <span className="text-sm font-mono">{String(value)}</span>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Raw JSON (collapsible) */}
+                                                    <details className="mt-4">
+                                                        <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+                                                            Raw JSON Data
+                                                        </summary>
+                                                        <div className="mt-2 bg-muted/30 rounded-lg p-3 border border-white/5">
+                                                            <pre className="text-xs overflow-x-auto whitespace-pre-wrap font-mono">
+                                                                {JSON.stringify(result.data, null, 2)}
+                                                            </pre>
+                                                        </div>
+                                                    </details>
+                                                </CardContent>
+                                            </Card>
+                                        ))
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
