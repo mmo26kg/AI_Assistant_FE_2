@@ -210,7 +210,7 @@ export default function ExpenseExpert() {
                             </CardHeader>
                             <CardContent className="flex flex-col h-full">
                                 {/* Chat Messages */}
-                                <div className="h-64 overflow-y-auto mb-4 p-4 glass-effect border border-white/10 rounded-lg space-y-3 flex-1">
+                                <div className="max-h-[60vh] overflow-y-auto mb-4 p-4 glass-effect border border-white/10 rounded-lg space-y-3 flex-1">
                                     {chatMessages.map((msg) => (
                                         <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                                             {msg.type === 'ai' && (
