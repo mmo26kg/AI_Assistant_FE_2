@@ -1,0 +1,477 @@
+"use client";
+
+import React, { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Plus, TrendingUp, TrendingDown, DollarSign, PieChart, Calendar, Target, Settings, BarChart3, Coffee, Car, ShoppingBag, Film, Home, FileText, Utensils, MessageSquare, Send, Bot, User } from "lucide-react";
+
+// Define types for better TypeScript support
+interface ToolCall {
+    name: string;
+    arguments: Record<string, any>;
+    id: string;
+}
+
+interface ChatMessage {
+    id: number;
+    type: "user" | "ai";
+    message: string;
+    timestamp: string;
+    toolCalls?: ToolCall[];
+}
+
+export default function ExpenseExpert() {
+    const [chatInput, setChatInput] = useState("");
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+        {
+            id: 1,
+            type: "ai",
+            message: "Xin chào! Tôi là AI Assistant của bạn. Hãy mô tả chi tiêu của bạn và tôi sẽ giúp phân tích và tự động thêm vào danh sách.",
+            timestamp: new Date().toLocaleTimeString()
+        }
+    ]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [baseUrl, setBaseUrl] = useState("http://localhost:3000");
+
+    const handleSendMessage = async () => {
+        if (!chatInput.trim()) return;
+
+        const userInputContent = chatInput;
+
+        // Add user message
+        const userMessage: ChatMessage = {
+            id: Date.now(),
+            type: "user",
+            message: userInputContent,
+            timestamp: new Date().toLocaleTimeString()
+        };
+
+        setChatMessages(prev => [...prev, userMessage]);
+        setChatInput("");
+        setIsLoading(true);
+
+        try {
+            // Call API
+            const response = await fetch(`${baseUrl}/api/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    messages: [
+                        {
+                            role: "user",
+                            content: userInputContent
+                        }
+                    ],
+                    systemPrompt: "You are a Vietnamese expense tracking assistant. Analyze user's expense description and help categorize it with amount estimation. Respond in Vietnamese. Today is Aug 19, 2025.",
+                    options: {
+                        temperature: 0.7,
+                        maxTokens: 1000
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Extract AI response
+            const aiResponseText = data.success ? data.response : "Xin lỗi, tôi không thể xử lý yêu cầu của bạn lúc này.";
+
+            const aiResponse: ChatMessage = {
+                id: Date.now() + 1,
+                type: "ai",
+                message: aiResponseText,
+                timestamp: new Date().toLocaleTimeString(),
+                toolCalls: data.toolCalls || undefined
+            };
+
+            setChatMessages(prev => [...prev, aiResponse]);
+
+        } catch (error) {
+            console.error('API call failed:', error);
+
+            // Fallback response in case of error
+            const errorResponse: ChatMessage = {
+                id: Date.now() + 1,
+                type: "ai",
+                message: `Xin lỗi, có lỗi xảy ra khi kết nối với server. Tuy nhiên, tôi có thể giúp bạn phân tích: "${userInputContent}" có vẻ như là một khoản chi tiêu. Bạn có thể thử lại hoặc nhập thủ công vào form bên dưới.`,
+                timestamp: new Date().toLocaleTimeString()
+            };
+
+            setChatMessages(prev => [...prev, errorResponse]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen pt-20">
+            {/* Hero Section */}
+            <section className="relative py-20 overflow-hidden">
+                <div className="absolute inset-0 gradient-bg">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/4 via-muted/2 to-primary/5"></div>
+                </div>
+
+                {/* Floating Elements */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-20 left-10 w-16 h-16 bg-primary/8 rounded-full animate-float"></div>
+                    <div className="absolute top-40 right-20 w-12 h-12 bg-primary/6 rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
+                    <div className="absolute bottom-20 left-20 w-20 h-20 bg-primary/10 rounded-full animate-float" style={{ animationDelay: '4s' }}></div>
+                </div>
+
+                <div className="container mx-auto px-6 relative z-10 text-center">
+                    <div className="inline-flex items-center px-4 py-2 rounded-full glass-effect border border-primary/20 mb-8 animate-pulse-soft">
+                        <DollarSign className="w-4 h-4 text-primary mr-2" />
+                        <span className="text-sm font-medium text-foreground/80">Smart Financial Management</span>
+                    </div>
+
+                    <h1 className="text-4xl md:text-6xl font-bold font-mono mb-6">
+                        <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                            Expense Expert
+                        </span>
+                    </h1>
+
+                    <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
+                        Chuyên gia quản lý chi tiêu thông minh - Theo dõi, phân tích và tối ưu hóa tài chính cá nhân
+                        với công nghệ AI tiên tiến
+                    </p>
+                </div>
+            </section>
+
+            <div className="container mx-auto px-6 pb-12">
+                {/* AI Chat Assistant */}
+                <Card className="mb-8 glass-effect border border-primary/20 hover-lift">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 font-mono">
+                            <Bot className="w-5 h-5 text-primary" />
+                            AI Expense Assistant
+                        </CardTitle>
+                        <CardDescription>Mô tả chi tiêu bằng ngôn ngữ tự nhiên và để AI giúp bạn phân tích</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {/* API Configuration */}
+                        <div className="mb-4 p-3 glass-effect border border-primary/10 rounded-lg">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Settings className="w-4 h-4 text-primary" />
+                                <span className="text-sm font-medium text-foreground">API Configuration</span>
+                            </div>
+                            <Input
+                                placeholder="Base URL (VD: http://localhost:3000)"
+                                value={baseUrl}
+                                onChange={(e) => setBaseUrl(e.target.value)}
+                                className="text-xs glass-effect border-primary/20"
+                            />
+                        </div>
+
+                        {/* Chat Messages */}
+                        <div className="h-64 overflow-y-auto mb-4 p-4 glass-effect border border-white/10 rounded-lg space-y-3">
+                            {chatMessages.map((msg) => (
+                                <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    {msg.type === 'ai' && (
+                                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                            <Bot className="w-4 h-4 text-white" />
+                                        </div>
+                                    )}
+                                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${msg.type === 'user'
+                                        ? 'bg-primary text-primary-foreground ml-auto'
+                                        : 'bg-muted text-foreground'
+                                        }`}>
+                                        <p className="text-sm">{msg.message}</p>
+
+                                        {/* Display tool calls if available */}
+                                        {msg.toolCalls && msg.toolCalls.length > 0 && (
+                                            <div className="mt-2 p-2 bg-primary/10 rounded text-xs">
+                                                <p className="font-semibold text-primary mb-1">🛠️ Tool Actions:</p>
+                                                {msg.toolCalls.map((tool, index) => (
+                                                    <div key={index} className="mb-1">
+                                                        <span className="font-medium">{tool.name}:</span>
+                                                        <div className="ml-2 opacity-80">
+                                                            {tool.arguments && Object.entries(tool.arguments).map(([key, value]) => (
+                                                                <div key={key}>
+                                                                    <span className="capitalize">{key}:</span> {
+                                                                        Array.isArray(value) ? value.join(', ') : String(value)
+                                                                    }
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        <span className="text-xs opacity-70 mt-1 block">{msg.timestamp}</span>
+                                    </div>
+                                    {msg.type === 'user' && (
+                                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                                            <User className="w-4 h-4 text-foreground" />
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                            {isLoading && (
+                                <div className="flex gap-3 justify-start">
+                                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                                        <Bot className="w-4 h-4 text-white" />
+                                    </div>
+                                    <div className="bg-muted px-4 py-2 rounded-lg">
+                                        <div className="flex space-x-1">
+                                            <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce"></div>
+                                            <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                            <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Chat Input */}
+                        <div className="flex gap-2">
+                            <Input
+                                placeholder="Mô tả chi tiêu của bạn... (VD: Vừa mua cà phê highland 45k)"
+                                value={chatInput}
+                                onChange={(e) => setChatInput(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                                className="glass-effect border-primary/20"
+                                disabled={isLoading}
+                            />
+                            <Button
+                                onClick={handleSendMessage}
+                                disabled={isLoading || !chatInput.trim()}
+                                className="bg-primary hover:bg-primary/90 px-4"
+                            >
+                                <Send className="w-4 h-4" />
+                            </Button>
+                        </div>
+
+                        {/* Quick Suggestions */}
+                        <div className="mt-4 flex flex-wrap gap-2">
+                            <span className="text-xs text-muted-foreground mb-2 w-full">Gợi ý nhanh:</span>
+                            {[
+                                "Mua cà phê 45,000₫",
+                                "Taxi về nhà 120,000₫",
+                                "Ăn trưa 85,000₫",
+                                "Xem phim 180,000₫"
+                            ].map((suggestion, index) => (
+                                <Button
+                                    key={index}
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setChatInput(suggestion)}
+                                    className="text-xs border-primary/20 hover:bg-primary/5"
+                                >
+                                    {suggestion}
+                                </Button>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Quick Add Expense */}
+                <Card className="mb-8 glass-effect border border-white/10 hover-lift">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 font-mono">
+                            <Plus className="w-5 h-5 text-primary" />
+                            Thêm Chi Tiêu Nhanh
+                        </CardTitle>
+                        <CardDescription>Ghi lại các khoản chi tiêu hàng ngày một cách dễ dàng</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <Input placeholder="Số tiền (VNĐ)" type="number" className="glass-effect border-primary/20" />
+                            <Input placeholder="Mô tả chi tiêu" className="glass-effect border-primary/20" />
+                            <select className="flex h-10 w-full rounded-lg border border-primary/20 glass-effect px-3 py-2 text-sm">
+                                <option>Ăn uống</option>
+                                <option>Di chuyển</option>
+                                <option>Mua sắm</option>
+                                <option>Giải trí</option>
+                                <option>Hóa đơn</option>
+                                <option>Khác</option>
+                            </select>
+                            <Button className="bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Thêm
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Statistics Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    {[
+                        {
+                            title: "Chi Tiêu Hôm Nay",
+                            value: "245,000₫",
+                            change: "+12%",
+                            trend: "up",
+                            icon: <Calendar className="w-5 h-5" />,
+                            color: "from-red-500 to-pink-500"
+                        },
+                        {
+                            title: "Chi Tiêu Tuần Này",
+                            value: "1,650,000₫",
+                            change: "-5%",
+                            trend: "down",
+                            icon: <BarChart3 className="w-5 h-5" />,
+                            color: "from-orange-500 to-yellow-500"
+                        },
+                        {
+                            title: "Chi Tiêu Tháng Này",
+                            value: "6,890,000₫",
+                            change: "Còn lại 3,110,000₫",
+                            trend: "neutral",
+                            icon: <PieChart className="w-5 h-5" />,
+                            color: "from-blue-500 to-cyan-500"
+                        },
+                        {
+                            title: "Tiết Kiệm",
+                            value: "2,340,000₫",
+                            change: "+8%",
+                            trend: "up",
+                            icon: <Target className="w-5 h-5" />,
+                            color: "from-green-500 to-emerald-500"
+                        }
+                    ].map((stat, index) => (
+                        <Card key={index} className="glass-effect border border-white/10 hover-lift group">
+                            <CardHeader className="pb-2">
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                        {stat.title}
+                                    </CardTitle>
+                                    <div className={`p-2 rounded-lg bg-gradient-to-r ${stat.color} text-white group-hover:scale-110 transition-transform duration-300`}>
+                                        {stat.icon}
+                                    </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold font-mono gradient-text mb-1">
+                                    {stat.value}
+                                </div>
+                                <div className="flex items-center text-xs">
+                                    {stat.trend === "up" && <TrendingUp className="w-3 h-3 text-green-500 mr-1" />}
+                                    {stat.trend === "down" && <TrendingDown className="w-3 h-3 text-red-500 mr-1" />}
+                                    <span className={`${stat.trend === "up" ? "text-green-500" :
+                                        stat.trend === "down" ? "text-red-500" :
+                                            "text-muted-foreground"
+                                        }`}>
+                                        {stat.change}
+                                    </span>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+
+                {/* Recent Transactions & Categories */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    {/* Recent Transactions */}
+                    <Card className="glass-effect border border-white/10 hover-lift">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 font-mono">
+                                <BarChart3 className="w-5 h-5 text-primary" />
+                                Giao Dịch Gần Đây
+                            </CardTitle>
+                            <CardDescription>Theo dõi các khoản chi tiêu mới nhất của bạn</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {[
+                                    { desc: "Cà phê sáng tại Highland", amount: "45,000₫", category: "Ăn uống", time: "8:30 AM", icon: <Coffee className="w-4 h-4" />, iconColor: "text-amber-600", bgColor: "bg-amber-100 dark:bg-amber-900/30", badgeBg: "bg-amber-100 dark:bg-amber-900/30", badgeText: "text-amber-700 dark:text-amber-300" },
+                                    { desc: "Taxi về nhà từ công ty", amount: "120,000₫", category: "Di chuyển", time: "6:45 PM", icon: <Car className="w-4 h-4" />, iconColor: "text-blue-600", bgColor: "bg-blue-100 dark:bg-blue-900/30", badgeBg: "bg-blue-100 dark:bg-blue-900/30", badgeText: "text-blue-700 dark:text-blue-300" },
+                                    { desc: "Mua đồ văn phòng tại Fahasa", amount: "280,000₫", category: "Mua sắm", time: "2:15 PM", icon: <ShoppingBag className="w-4 h-4" />, iconColor: "text-green-600", bgColor: "bg-green-100 dark:bg-green-900/30", badgeBg: "bg-green-100 dark:bg-green-900/30", badgeText: "text-green-700 dark:text-green-300" },
+                                    { desc: "Xem phim CGV", amount: "180,000₫", category: "Giải trí", time: "7:30 PM", icon: <Film className="w-4 h-4" />, iconColor: "text-purple-600", bgColor: "bg-purple-100 dark:bg-purple-900/30", badgeBg: "bg-purple-100 dark:bg-purple-900/30", badgeText: "text-purple-700 dark:text-purple-300" },
+                                ].map((transaction, index) => (
+                                    <div key={index} className="flex items-center justify-between p-4 glass-effect border border-white/5 rounded-xl hover:border-primary/30 transition-all duration-300 group">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ${transaction.bgColor}`}>
+                                                {React.cloneElement(transaction.icon, { className: `w-4 h-4 ${transaction.iconColor}` })}
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="font-medium text-foreground">{transaction.desc}</p>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <Badge variant="secondary" className={`text-xs ${transaction.badgeBg} ${transaction.badgeText}`}>
+                                                        {transaction.category}
+                                                    </Badge>
+                                                    <span className="text-xs text-muted-foreground">{transaction.time}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="font-bold text-red-500 font-mono">-{transaction.amount}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Expense Categories */}
+                    <Card className="glass-effect border border-white/10 hover-lift">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 font-mono">
+                                <PieChart className="w-5 h-5 text-primary" />
+                                Phân Tích Theo Danh Mục
+                            </CardTitle>
+                            <CardDescription>Xem phân bố chi tiêu theo từng danh mục</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-6">
+                                {[
+                                    { category: "Ăn uống", amount: "2,450,000₫", percent: 35, color: "bg-gradient-to-r from-red-500 to-pink-500", icon: <Utensils className="w-4 h-4" />, iconColor: "text-red-600" },
+                                    { category: "Di chuyển", amount: "1,680,000₫", percent: 25, color: "bg-gradient-to-r from-blue-500 to-cyan-500", icon: <Car className="w-4 h-4" />, iconColor: "text-blue-600" },
+                                    { category: "Mua sắm", amount: "1,200,000₫", percent: 18, color: "bg-gradient-to-r from-green-500 to-emerald-500", icon: <ShoppingBag className="w-4 h-4" />, iconColor: "text-green-600" },
+                                    { category: "Giải trí", amount: "980,000₫", percent: 15, color: "bg-gradient-to-r from-purple-500 to-violet-500", icon: <Film className="w-4 h-4" />, iconColor: "text-purple-600" },
+                                    { category: "Hóa đơn", amount: "580,000₫", percent: 7, color: "bg-gradient-to-r from-orange-500 to-yellow-500", icon: <Home className="w-4 h-4" />, iconColor: "text-orange-600" },
+                                ].map((item, index) => (
+                                    <div key={index} className="space-y-3">
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-2">
+                                                <div className={`p-1.5 rounded-lg bg-white/10 ${item.iconColor}`}>
+                                                    {item.icon}
+                                                </div>
+                                                <span className="font-medium text-foreground">{item.category}</span>
+                                            </div>
+                                            <span className="font-bold gradient-text font-mono">{item.amount}</span>
+                                        </div>
+                                        <div className="relative">
+                                            <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+                                                <div
+                                                    className={`${item.color} h-3 rounded-full transition-all duration-1000 ease-out animate-pulse-soft`}
+                                                    style={{ width: `${item.percent}%` }}
+                                                ></div>
+                                            </div>
+                                            <div className="absolute right-0 -top-1 text-xs font-medium text-muted-foreground">
+                                                {item.percent}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-4 justify-center">
+                    <Button size="lg" className="bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold">
+                        <BarChart3 className="w-5 h-5 mr-2" />
+                        Xem Báo Cáo Chi Tiết
+                    </Button>
+                    <Button size="lg" variant="outline" className="border-primary/20 hover:bg-primary/5 transform hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold glass-effect">
+                        <Settings className="w-5 h-5 mr-2" />
+                        Cài Đặt Ngân Sách
+                    </Button>
+                    <Button size="lg" variant="outline" className="border-primary/20 hover:bg-primary/5 transform hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold glass-effect">
+                        <Target className="w-5 h-5 mr-2" />
+                        Mục Tiêu Tiết Kiệm
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+}
