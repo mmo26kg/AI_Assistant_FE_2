@@ -145,132 +145,153 @@ export default function ExpenseExpert() {
             </section>
 
             <div className="container mx-auto px-6 pb-12">
-                {/* AI Chat Assistant */}
-                <Card className="mb-8 glass-effect border border-primary/20 hover-lift">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 font-mono">
-                            <Bot className="w-5 h-5 text-primary" />
-                            AI Expense Assistant
-                        </CardTitle>
-                        <CardDescription>Mô tả chi tiêu bằng ngôn ngữ tự nhiên và để AI giúp bạn phân tích</CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                {/* AI Chat Assistant - New Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
+                    {/* Left Column: Settings & Quick Suggestions */}
+                    <div className="lg:col-span-1 space-y-6">
                         {/* API Configuration */}
-                        <div className="mb-4 p-3 glass-effect border border-primary/10 rounded-lg">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Settings className="w-4 h-4 text-primary" />
-                                <span className="text-sm font-medium text-foreground">API Configuration</span>
-                            </div>
-                            <Input
-                                placeholder="Base URL (VD: http://localhost:3000)"
-                                value={baseUrl}
-                                onChange={(e) => setBaseUrl(e.target.value)}
-                                className="text-xs glass-effect border-primary/20"
-                            />
-                        </div>
-
-                        {/* Chat Messages */}
-                        <div className="h-64 overflow-y-auto mb-4 p-4 glass-effect border border-white/10 rounded-lg space-y-3">
-                            {chatMessages.map((msg) => (
-                                <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    {msg.type === 'ai' && (
-                                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                            <Bot className="w-4 h-4 text-white" />
-                                        </div>
-                                    )}
-                                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${msg.type === 'user'
-                                        ? 'bg-primary text-primary-foreground ml-auto'
-                                        : 'bg-muted text-foreground'
-                                        }`}>
-                                        <p className="text-sm">{msg.message}</p>
-
-                                        {/* Display tool calls if available */}
-                                        {msg.toolCalls && msg.toolCalls.length > 0 && (
-                                            <div className="mt-2 p-2 bg-primary/10 rounded text-xs">
-                                                <p className="font-semibold text-primary mb-1">🛠️ Tool Actions:</p>
-                                                {msg.toolCalls.map((tool, index) => (
-                                                    <div key={index} className="mb-1">
-                                                        <span className="font-medium">{tool.name}:</span>
-                                                        <div className="ml-2 opacity-80">
-                                                            {tool.arguments && Object.entries(tool.arguments).map(([key, value]) => (
-                                                                <div key={key}>
-                                                                    <span className="capitalize">{key}:</span> {
-                                                                        Array.isArray(value) ? value.join(', ') : String(value)
-                                                                    }
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        <span className="text-xs opacity-70 mt-1 block">{msg.timestamp}</span>
-                                    </div>
-                                    {msg.type === 'user' && (
-                                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                                            <User className="w-4 h-4 text-foreground" />
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                            {isLoading && (
-                                <div className="flex gap-3 justify-start">
-                                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                                        <Bot className="w-4 h-4 text-white" />
-                                    </div>
-                                    <div className="bg-muted px-4 py-2 rounded-lg">
-                                        <div className="flex space-x-1">
-                                            <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce"></div>
-                                            <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                            <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Chat Input */}
-                        <div className="flex gap-2">
-                            <Input
-                                placeholder="Mô tả chi tiêu của bạn... (VD: Vừa mua cà phê highland 45k)"
-                                value={chatInput}
-                                onChange={(e) => setChatInput(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                                className="glass-effect border-primary/20"
-                                disabled={isLoading}
-                            />
-                            <Button
-                                onClick={handleSendMessage}
-                                disabled={isLoading || !chatInput.trim()}
-                                className="bg-primary hover:bg-primary/90 px-4"
-                            >
-                                <Send className="w-4 h-4" />
-                            </Button>
-                        </div>
+                        <Card className="glass-effect border border-primary/20">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 font-mono text-sm">
+                                    <Settings className="w-4 h-4 text-primary" />
+                                    API Configuration
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <Input
+                                    placeholder="Base URL (VD: http://localhost:3000)"
+                                    value={baseUrl}
+                                    onChange={(e) => setBaseUrl(e.target.value)}
+                                    className="text-xs glass-effect border-primary/20"
+                                />
+                            </CardContent>
+                        </Card>
 
                         {/* Quick Suggestions */}
-                        <div className="mt-4 flex flex-wrap gap-2">
-                            <span className="text-xs text-muted-foreground mb-2 w-full">Gợi ý nhanh:</span>
-                            {[
-                                "Mua cà phê 45,000₫",
-                                "Taxi về nhà 120,000₫",
-                                "Ăn trưa 85,000₫",
-                                "Xem phim 180,000₫"
-                            ].map((suggestion, index) => (
-                                <Button
-                                    key={index}
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setChatInput(suggestion)}
-                                    className="text-xs border-primary/20 hover:bg-primary/5"
-                                >
-                                    {suggestion}
-                                </Button>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
+                        <Card className="glass-effect border border-primary/20">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 font-mono text-sm">
+                                    <MessageSquare className="w-4 h-4 text-primary" />
+                                    Gợi Ý Nhanh
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex flex-col gap-2">
+                                    {[
+                                        "Mua cà phê 45,000₫",
+                                        "Taxi về nhà 120,000₫",
+                                        "Ăn trưa 85,000₫",
+                                        "Xem phim 180,000₫"
+                                    ].map((suggestion, index) => (
+                                        <Button
+                                            key={index}
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setChatInput(suggestion)}
+                                            className="text-xs border-primary/20 hover:bg-primary/5 justify-start w-full"
+                                        >
+                                            {suggestion}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Right Column: Chat Interface */}
+                    <div className="lg:col-span-3">
+                        <Card className="glass-effect border border-primary/20 hover-lift h-full">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 font-mono">
+                                    <Bot className="w-5 h-5 text-primary" />
+                                    AI Expense Assistant
+                                </CardTitle>
+                                <CardDescription>Mô tả chi tiêu bằng ngôn ngữ tự nhiên và để AI giúp bạn phân tích</CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex flex-col h-full">
+                                {/* Chat Messages */}
+                                <div className="h-64 overflow-y-auto mb-4 p-4 glass-effect border border-white/10 rounded-lg space-y-3 flex-1">
+                                    {chatMessages.map((msg) => (
+                                        <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                            {msg.type === 'ai' && (
+                                                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                                    <Bot className="w-4 h-4 text-white" />
+                                                </div>
+                                            )}
+                                            <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${msg.type === 'user'
+                                                ? 'bg-primary text-primary-foreground ml-auto'
+                                                : 'bg-muted text-foreground'
+                                                }`}>
+                                                <p className="text-sm">{msg.message}</p>
+
+                                                {/* Display tool calls if available */}
+                                                {msg.toolCalls && msg.toolCalls.length > 0 && (
+                                                    <div className="mt-2 p-2 bg-primary/10 rounded text-xs">
+                                                        <p className="font-semibold text-primary mb-1">🛠️ Tool Actions:</p>
+                                                        {msg.toolCalls.map((tool, index) => (
+                                                            <div key={index} className="mb-1">
+                                                                <span className="font-medium">{tool.name}:</span>
+                                                                <div className="ml-2 opacity-80">
+                                                                    {tool.arguments && Object.entries(tool.arguments).map(([key, value]) => (
+                                                                        <div key={key}>
+                                                                            <span className="capitalize">{key}:</span> {
+                                                                                Array.isArray(value) ? value.join(', ') : String(value)
+                                                                            }
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+                                                <span className="text-xs opacity-70 mt-1 block">{msg.timestamp}</span>
+                                            </div>
+                                            {msg.type === 'user' && (
+                                                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                                                    <User className="w-4 h-4 text-foreground" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                    {isLoading && (
+                                        <div className="flex gap-3 justify-start">
+                                            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                                                <Bot className="w-4 h-4 text-white" />
+                                            </div>
+                                            <div className="bg-muted px-4 py-2 rounded-lg">
+                                                <div className="flex space-x-1">
+                                                    <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce"></div>
+                                                    <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                                    <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Chat Input */}
+                                <div className="flex gap-2 mt-auto">
+                                    <Input
+                                        placeholder="Mô tả chi tiêu của bạn... (VD: Vừa mua cà phê highland 45k)"
+                                        value={chatInput}
+                                        onChange={(e) => setChatInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                                        className="glass-effect border-primary/20"
+                                        disabled={isLoading}
+                                    />
+                                    <Button
+                                        onClick={handleSendMessage}
+                                        disabled={isLoading || !chatInput.trim()}
+                                        className="bg-primary hover:bg-primary/90 px-4"
+                                    >
+                                        <Send className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
 
                 {/* Quick Add Expense */}
                 <Card className="mb-8 glass-effect border border-white/10 hover-lift">
