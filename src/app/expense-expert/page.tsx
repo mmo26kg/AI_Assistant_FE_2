@@ -24,20 +24,37 @@ interface ChatMessage {
 
 export default function ExpenseExpert() {
     const [chatInput, setChatInput] = useState("");
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-        {
-            id: 1,
-            type: "ai",
-            message: "Xin chào! Tôi là AI Assistant của bạn. Hãy mô tả chi tiêu của bạn và tôi sẽ giúp phân tích và tự động thêm vào danh sách.",
-            timestamp: new Date().toLocaleTimeString()
-        }
-    ]);
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [isInitialized, setIsInitialized] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [baseUrl, setBaseUrl] = useState("http://localhost:3000");
     const [toolResults, setToolResults] = useState<any[]>([]);
     const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
     const chatMessagesEndRef = useRef<HTMLDivElement>(null);
     const chatContainerRef = useRef<HTMLDivElement>(null);
+
+    // Utility function to safely create timestamp on client side
+    const createTimestamp = () => {
+        if (typeof window !== 'undefined') {
+            return new Date().toLocaleTimeString();
+        }
+        return '';
+    };
+
+    // Initialize chat messages after component mount to avoid hydration mismatch
+    useEffect(() => {
+        if (!isInitialized) {
+            setChatMessages([
+                {
+                    id: 1,
+                    type: "ai",
+                    message: "Xin chào! Tôi là AI Assistant của bạn. Hãy mô tả chi tiêu của bạn và tôi sẽ giúp phân tích và tự động thêm vào danh sách.",
+                    timestamp: createTimestamp()
+                }
+            ]);
+            setIsInitialized(true);
+        }
+    }, [isInitialized]);
 
     // Auto scroll to bottom when new messages arrive
     useEffect(() => {
@@ -144,7 +161,7 @@ export default function ExpenseExpert() {
             id: Date.now(),
             type: "user",
             message: userInputContent,
-            timestamp: new Date().toLocaleTimeString()
+            timestamp: createTimestamp()
         };
 
         setChatMessages(prev => [...prev, userMessage]);
@@ -186,7 +203,7 @@ export default function ExpenseExpert() {
                 id: Date.now() + 1,
                 type: "ai",
                 message: aiResponseText,
-                timestamp: new Date().toLocaleTimeString(),
+                timestamp: createTimestamp(),
                 toolCalls: data.toolCalls || undefined
             };
 
@@ -209,7 +226,7 @@ export default function ExpenseExpert() {
                                 arguments: tool.arguments,
                                 id: tool.id
                             },
-                            timestamp: new Date().toLocaleTimeString()
+                            timestamp: createTimestamp()
                         });
                     });
                 } else if (data.toolCalls.length === 1) {
@@ -237,7 +254,7 @@ export default function ExpenseExpert() {
                                 arguments: tool.arguments,
                                 id: tool.id
                             },
-                            timestamp: new Date().toLocaleTimeString()
+                            timestamp: createTimestamp()
                         });
                     }
                     // If single tool with single items, don't create cards
@@ -254,7 +271,7 @@ export default function ExpenseExpert() {
                 id: Date.now() + 1,
                 type: "ai",
                 message: `Xin lỗi, có lỗi xảy ra khi kết nối với server. Tuy nhiên, tôi có thể giúp bạn phân tích: "${userInputContent}" có vẻ như là một khoản chi tiêu. Bạn có thể thử lại hoặc nhập thủ công vào form bên dưới.`,
-                timestamp: new Date().toLocaleTimeString()
+                timestamp: createTimestamp()
             };
 
             setChatMessages(prev => [...prev, errorResponse]);

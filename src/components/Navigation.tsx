@@ -3,19 +3,55 @@
 import Link from 'next/link';
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { Bot, DollarSign } from 'lucide-react';
 
 export default function Navigation() {
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
+    const pathname = usePathname();
 
     useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (!isMounted) return;
+
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
+            const scrollY = window.scrollY;
+            setIsScrolled(scrollY > 10);
         };
 
-        window.addEventListener('scroll', handleScroll);
+        // Use requestAnimationFrame to ensure proper timing
+        const initScroll = () => {
+            requestAnimationFrame(() => {
+                handleScroll();
+            });
+        };
+
+        // Initialize scroll state
+        initScroll();
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [isMounted]);
+
+    // Reset scroll state when pathname changes
+    useEffect(() => {
+        if (!isMounted) return;
+        
+        // Use requestAnimationFrame for better timing
+        const updateScroll = () => {
+            requestAnimationFrame(() => {
+                const scrollY = window.scrollY;
+                setIsScrolled(scrollY > 10);
+            });
+        };
+
+        const timer = setTimeout(updateScroll, 100);
+        return () => clearTimeout(timer);
+    }, [pathname, isMounted]);
 
     return (
         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
