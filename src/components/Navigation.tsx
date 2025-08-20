@@ -40,7 +40,7 @@ export default function Navigation() {
     // Reset scroll state when pathname changes
     useEffect(() => {
         if (!isMounted) return;
-        
+
         // Use requestAnimationFrame for better timing
         const updateScroll = () => {
             requestAnimationFrame(() => {

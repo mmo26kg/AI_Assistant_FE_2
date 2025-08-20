@@ -34,7 +34,7 @@ export const ToolResults: React.FC<ToolResultsProps> = ({
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => {}}
+                                        onClick={() => { }}
                                         className="text-xs px-3 py-1 border-primary/20 hover:bg-primary/5"
                                         title={expandedCards.size === toolResults.length ? "Collapse All" : "Expand All"}
                                     >
@@ -47,7 +47,7 @@ export const ToolResults: React.FC<ToolResultsProps> = ({
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => {}}
+                                        onClick={() => { }}
                                         className="text-xs border-primary/20 hover:bg-primary/5"
                                     >
                                         Clear
