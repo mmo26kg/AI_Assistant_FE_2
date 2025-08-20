@@ -17,8 +17,8 @@ import { BarChart3, Coffee, Car, ShoppingBag, Film, PieChart, Utensils, Home, Ta
 
 export default function ExpenseExpert() {
     // removed showSettings/baseUrl state
-    const { chatMessages, isLoading, chatInput, setChatInput, handleSendMessage, toolResults } = useChatManager();
-    const { expandedCards, toggleCardExpansion } = useToolResults();
+    const { chatMessages, isLoading, chatInput, setChatInput, handleSendMessage, toolResults, setToolResults } = useChatManager();
+    const { expandedCards, toggleCardExpansion, expandAllCards, collapseAllCards, setExpandedCards } = useToolResults();
 
     const handleQuickSuggestion = (s: string) => setChatInput(s);
 
@@ -43,6 +43,9 @@ export default function ExpenseExpert() {
                         toolResults={toolResults}
                         expandedCards={expandedCards}
                         onToggleCard={toggleCardExpansion}
+                        onExpandAll={() => expandAllCards(toolResults)}
+                        onCollapseAll={collapseAllCards}
+                        onClear={() => { setToolResults([]); setExpandedCards(new Set()); }}
                     />
                 </div>
 

@@ -9,12 +9,18 @@ interface ToolResultsProps {
     toolResults: ToolResult[];
     expandedCards: Set<string>;
     onToggleCard: (cardId: string) => void;
+    onExpandAll?: () => void;
+    onCollapseAll?: () => void;
+    onClear?: () => void;
 }
 
 export const ToolResults: React.FC<ToolResultsProps> = ({
     toolResults,
     expandedCards,
-    onToggleCard
+    onToggleCard,
+    onExpandAll,
+    onCollapseAll,
+    onClear
 }) => {
     return (
         <div className="lg:col-span-2">
@@ -34,7 +40,13 @@ export const ToolResults: React.FC<ToolResultsProps> = ({
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => { }}
+                                        onClick={() => {
+                                            if (expandedCards.size === toolResults.length) {
+                                                onCollapseAll && onCollapseAll();
+                                            } else {
+                                                onExpandAll && onExpandAll();
+                                            }
+                                        }}
                                         className="text-xs px-3 py-1 border-primary/20 hover:bg-primary/5"
                                         title={expandedCards.size === toolResults.length ? "Collapse All" : "Expand All"}
                                     >
@@ -47,7 +59,7 @@ export const ToolResults: React.FC<ToolResultsProps> = ({
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => { }}
+                                        onClick={() => onClear && onClear()}
                                         className="text-xs border-primary/20 hover:bg-primary/5"
                                     >
                                         Clear
@@ -108,65 +120,57 @@ export const ToolResults: React.FC<ToolResultsProps> = ({
                                             {/* Expanded View - Conditionally Visible */}
                                             {isExpanded && (
                                                 <div className="space-y-3">
-                                                    {/* Arguments Content */}
+                                                    {/* Arguments Content (Compact) */}
                                                     {result.data.arguments && (
-                                                        <div className="space-y-3">
+                                                        <div className="space-y-2">
                                                             <h4 className="text-xs font-semibold text-foreground">Arguments:</h4>
-                                                            {Object.entries(result.data.arguments).map(([key, value]) => (
-                                                                <div key={key} className="space-y-2">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <div className={`w-1 h-4 bg-${cardColor.accent}-500 rounded-full`}></div>
-                                                                        <span className="text-sm font-medium capitalize">{key}</span>
-                                                                    </div>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {Object.entries(result.data.arguments).map(([key, value]) => {
+                                                                    const chips: { label: string; value: string }[] = [];
 
-                                                                    {Array.isArray(value) ? (
-                                                                        <div className="ml-3 space-y-2">
-                                                                            {value.map((item, index) => (
-                                                                                <div key={index} className={`bg-${cardColor.accent}-500/5 rounded-lg p-3 border border-${cardColor.accent}-500/10`}>
-                                                                                    <div className="text-xs text-muted-foreground mb-2">Item {index + 1}</div>
-                                                                                    {typeof item === 'object' ? (
-                                                                                        <div className="space-y-1">
-                                                                                            {Object.entries(item).map(([itemKey, itemValue]) => (
-                                                                                                <div key={itemKey} className="flex justify-between items-center">
-                                                                                                    <span className="text-xs text-muted-foreground capitalize">{itemKey}:</span>
-                                                                                                    <span className="text-sm font-mono">{String(itemValue)}</span>
-                                                                                                </div>
-                                                                                            ))}
-                                                                                        </div>
-                                                                                    ) : (
-                                                                                        <span className="text-sm font-mono">{String(item)}</span>
-                                                                                    )}
+                                                                    const pushPrimitive = (lbl: string, val: any) => {
+                                                                        chips.push({ label: lbl, value: typeof val === 'string' ? val : JSON.stringify(val) });
+                                                                    };
+
+                                                                    if (Array.isArray(value)) {
+                                                                        value.forEach((item, idx) => {
+                                                                            if (item && typeof item === 'object') {
+                                                                                Object.entries(item).forEach(([ik, iv]) => pushPrimitive(`${key}[${idx}].${ik}`, iv));
+                                                                            } else {
+                                                                                pushPrimitive(`${key}[${idx}]`, item);
+                                                                            }
+                                                                        });
+                                                                    } else if (value && typeof value === 'object') {
+                                                                        Object.entries(value).forEach(([k2, v2]) => pushPrimitive(`${key}.${k2}`, v2));
+                                                                    } else {
+                                                                        pushPrimitive(key, value);
+                                                                    }
+
+                                                                    return (
+                                                                        <React.Fragment key={key}>
+                                                                            {chips.map(ch => (
+                                                                                <div
+                                                                                    key={ch.label}
+                                                                                    className={`group px-2 py-1 rounded-md bg-${cardColor.accent}-500/10 border border-${cardColor.accent}-500/20 hover:border-${cardColor.accent}-500/40 text-[10px] leading-tight flex items-center gap-1 transition-colors`}
+                                                                                >
+                                                                                    <span className="font-medium text-foreground/80">{ch.label}:</span>
+                                                                                    <span className="font-mono text-foreground/70 truncate max-w-[140px]" title={ch.value}>{ch.value}</span>
                                                                                 </div>
                                                                             ))}
-                                                                        </div>
-                                                                    ) : typeof value === 'object' && value !== null ? (
-                                                                        <div className={`ml-3 bg-${cardColor.accent}-500/5 rounded-lg p-3 border border-${cardColor.accent}-500/10`}>
-                                                                            <div className="space-y-1">
-                                                                                {Object.entries(value).map(([objKey, objValue]) => (
-                                                                                    <div key={objKey} className="flex justify-between items-center">
-                                                                                        <span className="text-xs text-muted-foreground capitalize">{objKey}:</span>
-                                                                                        <span className="text-sm font-mono">{String(objValue)}</span>
-                                                                                    </div>
-                                                                                ))}
-                                                                            </div>
-                                                                        </div>
-                                                                    ) : (
-                                                                        <div className={`ml-3 bg-${cardColor.accent}-500/5 rounded-lg p-2 border border-${cardColor.accent}-500/10`}>
-                                                                            <span className="text-sm font-mono">{String(value)}</span>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            ))}
+                                                                        </React.Fragment>
+                                                                    );
+                                                                })}
+                                                            </div>
                                                         </div>
                                                     )}
 
                                                     {/* Raw JSON (collapsible) */}
-                                                    <details className="mt-4">
+                                                    <details className="mt-2">
                                                         <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
                                                             Raw JSON Data
                                                         </summary>
                                                         <div className={`mt-2 bg-${cardColor.accent}-500/5 rounded-lg p-3 border border-${cardColor.accent}-500/10`}>
-                                                            <pre className="text-xs overflow-x-auto whitespace-pre-wrap font-mono">
+                                                            <pre className="text-xs overflow-x-auto whitespace-pre-wrap font-mono max-h-64">
                                                                 {JSON.stringify(result.data, null, 2)}
                                                             </pre>
                                                         </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { HeroSection } from "./HeroSection";
-import { SettingsPanel } from "./SettingsPanel";
+// import { SettingsPanel } from "./SettingsPanel";
 import { ChatInterface } from "./ChatInterface";
 import { ToolResults } from "./ToolResults";
 import { QuickAddExpense } from "./QuickAddExpense";
@@ -39,7 +39,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 
     const {
         expandedCards,
-        toggleCardExpansion
+        toggleCardExpansion,
+        expandAllCards,
+        collapseAllCards,
+        setExpandedCards
     } = useToolResults();
 
     const handleQuickSuggestion = (suggestion: string) => {
@@ -66,12 +69,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
                 />
 
                 {/* Settings Panel */}
-                {showSettings && (
+                {/* {showSettings && (
                     <SettingsPanel
                         baseUrl={baseUrl}
                         onClose={onToggleSettings}
                     />
-                )}
+                )} */}
 
                 {/* Quick Add Expense */}
                 {showAddExpense && (
@@ -97,6 +100,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
                                 toolResults={toolResults}
                                 expandedCards={expandedCards}
                                 onToggleCard={toggleCardExpansion}
+                                onExpandAll={() => expandAllCards(toolResults)}
+                                onCollapseAll={collapseAllCards}
+                                onClear={() => { setExpandedCards(new Set()); /* clear tool results not stored here */ }}
                             />
                         </div>
 
