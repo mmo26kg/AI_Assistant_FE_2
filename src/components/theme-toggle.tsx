@@ -183,7 +183,7 @@ export function ThemeToggle() {
             <span className="relative block h-[1.4rem] w-[1.4rem]">
                 <span
                     ref={sunRef}
-                    className="theme-toggle-icon absolute inset-0 flex items-center justify-center text-amber-500 dark:text-amber-400 drop-shadow-[0_0_4px_rgba(251,191,36,0.55)] group-hover:drop-shadow-[0_0_6px_rgba(251,191,36,0.75)]"
+                    className="theme-toggle-icon absolute inset-0 flex items-center justify-center text-primary dark:text-primary"
                     style={{ opacity: resolvedTheme === 'light' ? 1 : 0 }}
                 >
                     <Sun className="h-full w-full" strokeWidth={1.5} />
