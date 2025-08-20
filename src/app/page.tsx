@@ -4,27 +4,11 @@ import { ArrowRight, Sparkles, Zap, Shield, Heart, Star, TrendingUp, Bot, Radar,
 export default function HomePage() {
     return (
         <main className="min-h-screen">
-            {/* Hero Section with 3D Elements */}
-            <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-                {/* Animated Background with Radar Pattern */}
-                <div className="absolute inset-0 gradient-bg">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-muted/2 to-primary/4"></div>
-                    {/* Radar Circles Animation */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                        <div className="w-96 h-96 border border-primary/30 rounded-full animate-ping"></div>
-                        <div className="absolute w-80 h-80 border border-primary/20 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
-                        <div className="absolute w-64 h-64 border border-primary/10 rounded-full animate-ping" style={{ animationDelay: '2s' }}></div>
-                    </div>
-                </div>
-
-                {/* Floating Elements */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-20 left-10 w-20 h-20 bg-primary/5 rounded-full animate-float"></div>
-                    <div className="absolute top-40 right-20 w-16 h-16 bg-primary/8 rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
-                    <div className="absolute bottom-40 left-20 w-24 h-24 bg-primary/6 rounded-full animate-float" style={{ animationDelay: '4s' }}></div>
-                    <div className="absolute bottom-20 right-10 w-12 h-12 bg-primary/7 rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
-                </div>
-
+            {/* Hero Section Static Minimal Grid */}
+            <section className="relative min-h-screen flex items-center justify-center hero-static-grid">
+                {/* Static grid pattern (built into :before pseudo) */}
+                {/* Removed animated aurora + noise + cursor field for fully static background */}
+                {/* Content */}
                 <div className="relative z-10 container mx-auto px-6 text-center">
                     {/* Badge */}
                     <div className="inline-flex items-center px-4 py-2 rounded-full glass-effect border border-primary/20 mb-8 animate-pulse-soft">
@@ -99,42 +83,12 @@ export default function HomePage() {
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {[
-                            {
-                                icon: <Radar className="w-8 h-8" />,
-                                title: 'Proactive Detection',
-                                description: 'Catches signals from your behavior patterns and anticipates needs before explicit requests',
-                                gradient: 'from-primary/80 to-primary'
-                            },
-                            {
-                                icon: <Eye className="w-8 h-8" />,
-                                title: 'Silent Observation',
-                                description: 'Works quietly in the background, learning continuously without interrupting your flow',
-                                gradient: 'from-foreground/80 to-foreground/60'
-                            },
-                            {
-                                icon: <Target className="w-8 h-8" />,
-                                title: 'Smart Prioritization',
-                                description: 'Sorts urgent from non-urgent, focuses on what truly matters to reduce cognitive load',
-                                gradient: 'from-primary/70 to-primary/90'
-                            },
-                            {
-                                icon: <Clock className="w-8 h-8" />,
-                                title: 'Perfect Timing',
-                                description: 'Suggests actions at the right moment with gentle nudges and context-aware reminders',
-                                gradient: 'from-foreground/70 to-foreground/50'
-                            },
-                            {
-                                icon: <Sparkles className="w-8 h-8" />,
-                                title: 'Continuous Learning',
-                                description: 'Gets better at understanding you over time, adapting to your unique patterns and preferences',
-                                gradient: 'from-primary/90 to-primary/70'
-                            },
-                            {
-                                icon: <Shield className="w-8 h-8" />,
-                                title: 'Subtle Integration',
-                                description: 'Seamlessly integrates with your workflow without being intrusive or demanding attention',
-                                gradient: 'from-foreground/60 to-foreground/40'
-                            },
+                            { icon: <Radar className="w-8 h-8" />, title: 'Proactive Detection', description: 'Catches signals from your behavior patterns and anticipates needs before explicit requests', gradient: 'from-primary/80 to-primary' },
+                            { icon: <Eye className="w-8 h-8" />, title: 'Silent Observation', description: 'Works quietly in the background, learning continuously without interrupting your flow', gradient: 'from-foreground/80 to-foreground/60' },
+                            { icon: <Target className="w-8 h-8" />, title: 'Smart Prioritization', description: 'Sorts urgent from non-urgent, focuses on what truly matters to reduce cognitive load', gradient: 'from-primary/70 to-primary/90' },
+                            { icon: <Clock className="w-8 h-8" />, title: 'Perfect Timing', description: 'Suggests actions at the right moment with gentle nudges and context-aware reminders', gradient: 'from-foreground/70 to-foreground/50' },
+                            { icon: <Sparkles className="w-8 h-8" />, title: 'Continuous Learning', description: 'Gets better at understanding you over time, adapting to your unique patterns and preferences', gradient: 'from-primary/90 to-primary/70' },
+                            { icon: <Shield className="w-8 h-8" />, title: 'Subtle Integration', description: 'Seamlessly integrates with your workflow without being intrusive or demanding attention', gradient: 'from-foreground/60 to-foreground/40' },
                         ].map((feature, index) => (
                             <div
                                 key={index}
