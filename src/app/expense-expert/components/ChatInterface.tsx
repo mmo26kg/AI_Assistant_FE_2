@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Bot, User, Send } from "lucide-react";
 import { ChatMessage } from "../types";
+import { QUICK_SUGGESTIONS } from "../constants";
 
 interface ChatInterfaceProps {
     messages: ChatMessage[];
@@ -29,7 +30,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     };
 
     return (
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-4">{/* adjusted from 3 to 4 */}
             <Card className="glass-effect border border-primary/20 hover-lift h-full">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 font-mono">
@@ -121,6 +122,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                             <Send className="w-4 h-4" />
                         </Button>
                     </div>
+
+                    {/* Quick Suggestions moved BELOW input */}
+                    {onQuickSuggestion && (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                            {QUICK_SUGGESTIONS.map(s => (
+                                <Button
+                                    key={s}
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => onQuickSuggestion(s)}
+                                    className="text-xs glass-effect border-primary/10 hover:border-primary/40 hover:bg-primary/10"
+                                >
+                                    {s}
+                                </Button>
+                            ))}
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

@@ -2,23 +2,21 @@
 
 import React, { useState } from "react";
 import { HeroSection } from "./components/HeroSection";
-import { SettingsPanel } from "./components/SettingsPanel";
+// removed SettingsPanel
 import { ChatInterface } from "./components/ChatInterface";
 import { ToolResults } from "./components/ToolResults";
 import { QuickAddExpense } from "./components/QuickAddExpense";
 import { StatisticsCards } from "./components/StatisticsCards";
 import { useChatManager } from "./hooks/useChatManager";
 import { useToolResults } from "./hooks/useToolResults";
-import { DEFAULT_BASE_URL } from "./constants";
+// removed DEFAULT_BASE_URL import
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BarChart3, Coffee, Car, ShoppingBag, Film, PieChart, Utensils, Home, Target, Settings } from "lucide-react";
 
 export default function ExpenseExpert() {
-    const [showSettings, setShowSettings] = useState(true);
-    const [baseUrl] = useState(DEFAULT_BASE_URL);
-
+    // removed showSettings/baseUrl state
     const { chatMessages, isLoading, chatInput, setChatInput, handleSendMessage, toolResults } = useChatManager();
     const { expandedCards, toggleCardExpansion } = useToolResults();
 
@@ -28,11 +26,10 @@ export default function ExpenseExpert() {
         <div className="min-h-screen pt-16">
             <HeroSection />
             <div className="container mx-auto px-6 pb-12">
+                {/* Adjusted grid: remove empty left column */}
                 <div className="grid grid-cols-1 lg:grid-cols-6 gap-6 mb-8">
-                    <div className="lg:col-span-1 space-y-6">
-                        {showSettings && <SettingsPanel baseUrl={baseUrl} />}
-                    </div>
-
+                    {/* Chat now spans 4 columns */}
+                    {/* ChatInterface wrapper class adjusted in component to lg:col-span-4 */}
                     <ChatInterface
                         messages={chatMessages}
                         isLoading={isLoading}
