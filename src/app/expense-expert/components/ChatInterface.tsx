@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bot, User, Send } from "lucide-react";
+import { Bot, User, Send, MessageSquare } from "lucide-react";
 import { ChatMessage } from "../types";
 import { QUICK_SUGGESTIONS } from "../constants";
 
@@ -23,6 +23,20 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     onSendMessage,
     onQuickSuggestion
 }) => {
+    const messagesEndRef = useRef<HTMLDivElement>(null); // kept if needed but no longer used for scroll
+    const chatContainerRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        const el = chatContainerRef.current;
+        if (!el) return;
+        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    };
+
+    // Scroll to bottom when new messages arrive
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             onSendMessage();
@@ -30,29 +44,35 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     };
 
     return (
-        <div className="lg:col-span-4">{/* adjusted from 3 to 4 */}
+        <div className="lg:col-span-4">
             <Card className="glass-effect border border-primary/20 hover-lift h-full">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 font-mono">
-                        <Bot className="w-5 h-5 text-primary" />
-                        AI Expense Assistant
-                    </CardTitle>
-                    <CardDescription>Mô tả chi tiêu bằng ngôn ngữ tự nhiên và để AI giúp bạn phân tích</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle className="flex items-center gap-2 font-mono">
+                            <Bot className="w-5 h-5 text-primary" />
+                            AI Expense Assistant
+                        </CardTitle>
+                        <CardDescription className="flex items-center gap-2">
+                            <MessageSquare className="w-4 h-4 text-muted-foreground" />
+                            <span>{messages.length} tin nhắn</span>
+                        </CardDescription>
+                    </div>
                 </CardHeader>
                 <CardContent className="flex flex-col h-full">
                     {/* Chat Messages */}
                     <div
-                        className="max-h-[60vh] overflow-y-auto mb-4 p-4 glass-effect border border-white/10 rounded-lg space-y-3 flex-1 scroll-smooth"
+                        ref={chatContainerRef}
+                        className="max-h-[60vh] overflow-y-auto mb-4 p-4 glass-effect border border-white/10 rounded-lg space-y-3 flex-1 scroll-smooth overscroll-contain"
                         style={{ scrollBehavior: 'smooth' }}
                     >
                         {messages.map((msg) => (
-                            <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
                                 {msg.type === 'ai' && (
                                     <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                                         <Bot className="w-4 h-4 text-white" />
                                     </div>
                                 )}
-                                <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${msg.type === 'user'
+                                <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg transform transition-all duration-200 hover:scale-[1.02] ${msg.type === 'user'
                                     ? 'bg-primary text-primary-foreground ml-auto'
                                     : 'bg-muted text-foreground'
                                     }`}>
@@ -89,7 +109,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                             </div>
                         ))}
                         {isLoading && (
-                            <div className="flex gap-3 justify-start">
+                            <div className="flex gap-3 justify-start animate-fade-in">
                                 <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
                                     <Bot className="w-4 h-4 text-white" />
                                 </div>
@@ -102,6 +122,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                                 </div>
                             </div>
                         )}
+                        <div ref={messagesEndRef} /> {/* anchor retained but not used for window scrolling */}
                     </div>
 
                     {/* Chat Input */}
