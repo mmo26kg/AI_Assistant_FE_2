@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Bot, DollarSign } from 'lucide-react';
+import { Radar, DollarSign, Info } from 'lucide-react';
 
 export default function Navigation() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -66,11 +66,11 @@ export default function Navigation() {
                     >
                         <div className="relative">
                             <div className={`bg-gradient-to-br from-primary/90 to-primary rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-sm ${isScrolled ? 'w-8 h-8' : 'w-10 h-10'}`}>
-                                <Bot className={`text-white transition-all duration-300 ${isScrolled ? 'w-4 h-4' : 'w-6 h-6'}`} />
+                                <Radar className={`text-white transition-all duration-300 ${isScrolled ? 'w-4 h-4' : 'w-6 h-6'}`} />
                             </div>
                         </div>
                         <span className={`font-mono bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent transition-all duration-300 ${isScrolled ? 'text-lg' : 'text-xl'}`}>
-                            AI Assistant
+                            KATCHX
                         </span>
                     </Link>
 
@@ -80,7 +80,15 @@ export default function Navigation() {
                                 href="/"
                                 className={`relative text-foreground/80 hover:text-primary transition-all duration-300 font-medium group ${isScrolled ? 'text-sm' : 'text-base'}`}
                             >
-                                Trang chủ
+                                Home
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                            </Link>
+                            <Link
+                                href="/about"
+                                className={`relative text-foreground/80 hover:text-primary transition-all duration-300 font-medium group flex items-center gap-2 ${isScrolled ? 'text-sm' : 'text-base'}`}
+                            >
+                                <Info className={`transition-all duration-300 ${isScrolled ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                                <span className={isScrolled ? 'hidden lg:inline' : ''}>About</span>
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                             </Link>
                             <Link

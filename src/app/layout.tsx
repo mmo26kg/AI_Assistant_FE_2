@@ -4,8 +4,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "React Development Guide",
-    description: "Learn how to build frontend faster with React.js",
+    title: "KATCHX - Your Intuitive AI Companion",
+    description: "The AI that catches the subtle signals of what you need and delivers solutions before you even ask. Catch what matters with KATCHX.",
 };
 
 export default function RootLayout({
