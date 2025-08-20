@@ -17,6 +17,7 @@ const NAV_LINKS: NavItem[] = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
     { href: '/expense-expert', label: 'Expense Expert', badge: 'NEW' },
+    { href: '/auth', label: 'Login' },
 ];
 
 export default function Navigation() {
