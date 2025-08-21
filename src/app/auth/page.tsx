@@ -9,9 +9,14 @@ interface FieldState { value: string; error: string | null; }
 interface RegisterState { name: FieldState; email: FieldState; password: FieldState; confirm: FieldState; }
 interface LoginState { email: FieldState; password: FieldState; remember: boolean; }
 
+interface StrapiAuthSuccess { jwt: string; user: any; }
+
 const makeField = (): FieldState => ({ value: '', error: null });
 const initialRegister: RegisterState = { name: makeField(), email: makeField(), password: makeField(), confirm: makeField() };
 const initialLogin: LoginState = { email: makeField(), password: makeField(), remember: false };
+
+const API_BASE = (process.env.NEXT_PUBLIC_USER_MANAGEMENT_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
+function apiUrl(path: string) { return `${API_BASE}${path}`; }
 
 export default function AuthPage() {
     const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -53,13 +58,66 @@ export default function AuthPage() {
     };
 
     const onSubmit = async (e: React.FormEvent) => {
-        e.preventDefault(); setMessage(null);
-        if (!runValidation()) return; setLoading(true);
-        await new Promise(r => setTimeout(r, 1200));
-        const success = Math.random() > 0.25;
-        if (success) { setMessage({ type: 'success', text: mode === 'login' ? 'Đăng nhập thành công!' : 'Đăng ký thành công!' }); if (mode === 'register') setMode('login'); }
-        else { setMessage({ type: 'error', text: 'Có lỗi xảy ra. Thử lại.' }); }
-        setLoading(false);
+        e.preventDefault();
+        setMessage(null);
+        if (!runValidation()) return;
+        if (!API_BASE) {
+            setMessage({ type: 'error', text: 'Thiếu NEXT_PUBLIC_USER_MANAGEMENT_API_BASE_URL' });
+            return;
+        }
+        setLoading(true);
+        try {
+            if (mode === 'register') {
+                const payload = {
+                    username: registerFields.name.value.trim(),
+                    email: registerFields.email.value.trim(),
+                    password: registerFields.password.value,
+                };
+                const res = await fetch(apiUrl('/api/auth/local/register'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    cache: 'no-store',
+                    mode: 'cors'
+                });
+                const data: any = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    const errMsg = data?.error?.message || data?.message || `Đăng ký thất bại (${res.status})`;
+                    throw new Error(Array.isArray(errMsg) ? errMsg[0] : errMsg);
+                }
+                const auth: StrapiAuthSuccess = data;
+                try { localStorage.setItem('authToken', auth.jwt); } catch { }
+                setMessage({ type: 'success', text: 'Đăng ký thành công! Hãy đăng nhập.' });
+                setMode('login');
+                setRegisterFields(initialRegister);
+            } else {
+                const payload = {
+                    identifier: loginFields.email.value.trim(),
+                    password: loginFields.password.value,
+                };
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    cache: 'no-store'
+                });
+                const data: any = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    const errMsg = data?.error || `Đăng nhập thất bại (${res.status})`;
+                    throw new Error(Array.isArray(errMsg) ? errMsg[0] : errMsg);
+                }
+                try { sessionStorage.setItem('user', JSON.stringify(data.user)); } catch {}
+                setMessage({ type: 'success', text: 'Đăng nhập thành công!' });
+            }
+        } catch (err: any) {
+            if (err instanceof TypeError) {
+                setMessage({ type: 'error', text: 'Không kết nối được máy chủ. Kiểm tra API_BASE & server.' });
+            } else {
+                setMessage({ type: 'error', text: err.message || 'Có lỗi xảy ra' });
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     const socialClick = (provider: string) => { setLoading(true); setMessage(null); setTimeout(() => { setLoading(false); setMessage({ type: 'success', text: `Giả lập ${provider} thành công` }); }, 1000); };
