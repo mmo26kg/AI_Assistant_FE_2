@@ -66,7 +66,7 @@ export const QUICK_SUGGESTIONS = [
     "Xem phim 180,000₫"
 ];
 
-export const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+export const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_MCP_HOST_URL || "http://localhost:3000";
 
 export const SYSTEM_PROMPT = "You are a Vietnamese expense tracking assistant. Analyze user's expense description and help categorize it with amount estimation. Respond in Vietnamese. Today is Aug 19, 2025.";
 

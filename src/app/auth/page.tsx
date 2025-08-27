@@ -15,7 +15,7 @@ const makeField = (): FieldState => ({ value: '', error: null });
 const initialRegister: RegisterState = { name: makeField(), email: makeField(), password: makeField(), confirm: makeField() };
 const initialLogin: LoginState = { email: makeField(), password: makeField(), remember: false };
 
-const API_BASE = process.env.NEXT_PUBLIC_USER_MANAGEMENT_API_BASE_URL || '';
+const API_BASE = process.env.NEXT_PUBLIC_STRAPI_URL || '';
 
 export default function AuthPage() {
     const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -61,7 +61,7 @@ export default function AuthPage() {
         setMessage(null);
         if (!runValidation()) return;
         if (!API_BASE) {
-            setMessage({ type: 'error', text: 'Thiếu NEXT_PUBLIC_USER_MANAGEMENT_API_BASE_URL' });
+            setMessage({ type: 'error', text: 'Thiếu NEXT_PUBLIC_STRAPI_URL' });
             return;
         }
         setLoading(true);
