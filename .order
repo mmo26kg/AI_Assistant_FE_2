@@ -64,6 +64,7 @@ src/
 next-env.d.ts
 
 # 🌍 Environment & Deployment
+.env.example
 .env.local
 .ebextensions/
 

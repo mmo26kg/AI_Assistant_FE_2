@@ -1,0 +1,11 @@
+# Utils directory ordering
+# Ordered by purpose: Core -> Validation -> Helpers
+
+# ⚙️ Core utilities
+utils.ts
+
+# ✅ Validation
+validation.ts
+
+# 🛠️ Helper functions
+helpers.ts

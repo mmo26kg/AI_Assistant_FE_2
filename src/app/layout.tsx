@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Navigation from "@/components/Navigation";
+import ConditionalNavigation from "@/components/ConditionalNavigation";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
@@ -37,7 +37,7 @@ export default function RootLayout({
                     enableSystem={true}
                     storageKey="ai-assistant-theme"
                 >
-                    <Navigation />
+                    <ConditionalNavigation />
                     <div>
                         {children}
                     </div>

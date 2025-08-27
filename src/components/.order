@@ -1,11 +1,26 @@
 # Components directory ordering
-# UI library first, then custom components alphabetically
+# Ordered by scope: UI Base -> Navigation -> Forms -> Providers
 
-# 🎨 UI Component Library (shadcn/ui)
-ui/
+# 🎨 UI Base Components
+Alert.tsx
+Button.tsx
+Card.tsx
+Input.tsx
 
-# 🎭 Custom Components (Alphabetical)
-ContactForm.tsx
+# 🧭 Navigation & Layout
+ConditionalNavigation.tsx
 Navigation.tsx
+
+# 📝 Forms & Inputs
+ContactForm.tsx
+FormInput.tsx
+LoginForm.tsx
+RegisterForm.tsx
+
+# 🎭 Theme & Providers
 ThemeProvider.tsx
 ThemeToggle.tsx
+ThemeTransitionDemo.tsx
+
+# 📁 UI Components Library
+ui/

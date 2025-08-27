@@ -1,8 +1,5 @@
 # API directory ordering
 # Ordered by feature/module
 
-# 🔐 Authentication
-auth/
-
-# 🔑 Login
+# � Authentication & Login
 login/
