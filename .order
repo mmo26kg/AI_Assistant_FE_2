@@ -1,0 +1,77 @@
+# Project file/folder ordering configuration
+# This file defines the logical order for displaying files and folders
+
+# 📚 Documentation (First - most important for understanding project)
+README.md
+brand-guidelines.md
+
+# ⚙️ Core Configuration Files
+package.json
+package-lock.json
+tsconfig.json
+next.config.mjs
+tailwind.config.js
+postcss.config.js
+components.json
+
+# 🎯 Source Code (Main application logic)
+src/
+  # 📱 App Structure (Next.js App Router)
+  app/
+    # 📄 Root Layout & Pages
+    layout.tsx
+    page.tsx
+    globals.css
+    
+    # 🧩 Shared Components
+    components/
+    
+    # 📑 Feature Pages (Alphabetical)
+    about/
+    auth/
+    expense-expert/
+    
+    # 🔌 API Routes
+    api/
+  
+  # 🔧 Shared Resources
+  components/
+    # 🎨 UI Components (shadcn)
+    ui/
+    
+    # 🎭 Custom Components (Alphabetical)
+    ContactForm.tsx
+    Navigation.tsx
+    ThemeProvider.tsx
+    ThemeToggle.tsx
+  
+  # 🪝 Custom Hooks
+  hooks/
+    useApi.ts
+    useLocalStorage.ts
+    useThemeTransition.ts
+  
+  # 📚 Utilities & Libraries
+  lib/
+  utils/
+  
+  # 🎨 Assets
+  lottie/
+
+# 🔧 Development & Tooling
+.vscode/
+.eslintrc.json
+next-env.d.ts
+
+# 🌍 Environment & Deployment
+.env.local
+.ebextensions/
+
+# 📦 Build Output & Dependencies (Hidden/System)
+.next/
+node_modules/
+
+# 🔄 Version Control & Meta
+.git/
+.gitignore
+.order

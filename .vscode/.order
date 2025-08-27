@@ -1,0 +1,5 @@
+# VSCode configuration ordering
+# Settings first, then tasks
+
+settings.json
+tasks.json

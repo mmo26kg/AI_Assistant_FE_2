@@ -37,8 +37,8 @@ src/
 │   │   ├── input.tsx
 │   │   └── badge.tsx
 │   ├── Navigation.tsx    # Header với navigation
-│   ├── theme-provider.tsx # Theme context provider
-│   └── theme-toggle.tsx  # Dark/Light mode toggle
+│   ├── ThemeProvider.tsx # Theme context provider
+│   └── ThemeToggle.tsx  # Dark/Light mode toggle
 └── lib/                  # Utilities
     └── utils.ts          # Tailwind merge utilities
 ```

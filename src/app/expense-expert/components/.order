@@ -1,0 +1,27 @@
+# Expense Expert Components ordering
+# Ordered by architectural importance and user flow
+
+# 🏗️ Layout & Structure
+MainLayout.tsx
+
+# 🎯 Hero & Landing
+HeroSection.tsx
+
+# 📊 Data Display Components
+StatisticsCards.tsx
+RecentTransactions.tsx
+ExpenseCategories.tsx
+
+# ⚡ Interactive Components
+QuickAddExpense.tsx
+ChatInterface.tsx
+
+# 🔘 Action & Control Components
+ActionButtons.tsx
+SettingsPanel.tsx
+
+# 🎨 Theme & Demo Components
+ThemeTransitionDemo.tsx
+
+# 🛠️ Tool & Utility Components
+ToolResults.tsx

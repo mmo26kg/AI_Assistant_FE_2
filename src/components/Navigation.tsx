@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { Radar } from 'lucide-react';

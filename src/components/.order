@@ -1,0 +1,11 @@
+# Components directory ordering
+# UI library first, then custom components alphabetically
+
+# 🎨 UI Component Library (shadcn/ui)
+ui/
+
+# 🎭 Custom Components (Alphabetical)
+ContactForm.tsx
+Navigation.tsx
+ThemeProvider.tsx
+ThemeToggle.tsx

@@ -1,6 +1,6 @@
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
-import { createThemeTransition } from '../utils';
+import { createThemeTransition } from '../app/expense-expert/utils';
 
 interface ThemeTransitionOptions {
     origin?: { x: number; y: number };

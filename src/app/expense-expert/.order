@@ -1,0 +1,25 @@
+# Expense Expert module ordering
+# Documentation first, then main page, then organized by feature type
+
+# 📖 Documentation
+overview.md
+
+# 📄 Main Page
+page.tsx
+
+# 🎨 UI Components
+components/
+
+# 🪝 Feature Hooks
+hooks/
+
+# 📊 Data & Services
+data/
+services/
+
+# 🔧 Utilities & Constants
+constants/
+utils/
+
+# 📝 Types
+types/

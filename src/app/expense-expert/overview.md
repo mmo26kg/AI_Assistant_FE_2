@@ -22,9 +22,9 @@ A modular AI-assisted expense tracking interface enabling natural language input
   hooks/
     useChatManager.ts
     useToolResults.ts
-    useThemeTransition.ts
+    (useThemeTransition.ts moved to /src/hooks/ for global access)
   utils/index.ts (card colors, timestamps, animation utilities, tool call processing)
-  data/mockData.tsx (mock stats, transactions, categories)
+  data/mockData.ts (mock stats, transactions, categories)
   components/
     MainLayout.tsx
     HeroSection.tsx

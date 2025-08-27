@@ -1,0 +1,18 @@
+# Source directory ordering
+# Ordered by architectural importance
+
+# 📱 Main Application (Next.js App Router)
+app/
+
+# 🧩 Reusable Components
+components/
+
+# 🪝 Custom Hooks
+hooks/
+
+# 📚 Shared Libraries & Utilities
+lib/
+utils/
+
+# 🎨 Static Assets
+lottie/

@@ -1,0 +1,11 @@
+# Hooks directory ordering
+# Ordered by scope: API -> Storage -> UI
+
+# 🌐 API & External
+useApi.ts
+
+# 💾 Data & Storage
+useLocalStorage.ts
+
+# 🎨 UI & Theme
+useThemeTransition.ts

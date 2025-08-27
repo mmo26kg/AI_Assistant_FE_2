@@ -1,0 +1,18 @@
+# App directory ordering
+# Core files first, then features, then API
+
+# 🏠 Root App Files
+layout.tsx
+page.tsx
+globals.css
+
+# 🧩 Shared App Components
+components/
+
+# 📑 Feature Pages (Alphabetical by importance/frequency of use)
+about/
+auth/
+expense-expert/
+
+# 🔌 API Routes (Last - backend logic)
+api/

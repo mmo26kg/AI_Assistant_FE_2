@@ -1,0 +1,8 @@
+# UI components ordering (shadcn/ui)
+# Ordered by frequency of use and dependency
+
+# 🔲 Basic Components
+button.tsx
+input.tsx
+card.tsx
+badge.tsx

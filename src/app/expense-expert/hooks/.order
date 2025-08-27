@@ -1,0 +1,8 @@
+# Expense Expert Hooks ordering
+# Ordered by dependency and scope
+
+# 💬 Core Feature Hooks
+useChatManager.ts
+
+# 🛠️ Tool Management
+useToolResults.ts
