@@ -15,8 +15,7 @@ const makeField = (): FieldState => ({ value: '', error: null });
 const initialRegister: RegisterState = { name: makeField(), email: makeField(), password: makeField(), confirm: makeField() };
 const initialLogin: LoginState = { email: makeField(), password: makeField(), remember: false };
 
-const API_BASE = (process.env.NEXT_PUBLIC_USER_MANAGEMENT_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
-function apiUrl(path: string) { return `${API_BASE}${path}`; }
+const API_BASE = process.env.NEXT_PUBLIC_USER_MANAGEMENT_API_BASE_URL || '';
 
 export default function AuthPage() {
     const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -73,7 +72,7 @@ export default function AuthPage() {
                     email: registerFields.email.value.trim(),
                     password: registerFields.password.value,
                 };
-                const res = await fetch(apiUrl('/api/auth/local/register'), {
+                const res = await fetch(`${API_BASE}/api/auth/local/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -106,7 +105,7 @@ export default function AuthPage() {
                     const errMsg = data?.error || `Đăng nhập thất bại (${res.status})`;
                     throw new Error(Array.isArray(errMsg) ? errMsg[0] : errMsg);
                 }
-                try { sessionStorage.setItem('user', JSON.stringify(data.user)); } catch {}
+                try { sessionStorage.setItem('user', JSON.stringify(data.user)); } catch { }
                 setMessage({ type: 'success', text: 'Đăng nhập thành công!' });
             }
         } catch (err: any) {

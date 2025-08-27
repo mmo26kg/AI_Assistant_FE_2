@@ -1,16 +1,25 @@
 import { NextResponse } from 'next/server';
 
 const UPSTREAM_BASE = (process.env.USER_MANAGEMENT_API_BASE_URL || process.env.NEXT_PUBLIC_USER_MANAGEMENT_API_BASE_URL || '').replace(/\/$/, '');
+const AUTH_TOKEN = process.env.STRAPI_AUTH_TOKEN || '';
 
 if (!UPSTREAM_BASE) {
-  // Note: build-time warning in logs if missing.
   console.warn('[api/login] Missing USER_MANAGEMENT_API_BASE_URL env variable');
+}
+
+if (!AUTH_TOKEN) {
+  console.warn('[api/login] Missing STRAPI_AUTH_TOKEN env variable');
 }
 
 export async function POST(req: Request) {
   if (!UPSTREAM_BASE) {
     return NextResponse.json({ error: 'Server config missing USER_MANAGEMENT_API_BASE_URL' }, { status: 500 });
   }
+
+  if (!AUTH_TOKEN) {
+    return NextResponse.json({ error: 'Server config missing STRAPI_AUTH_TOKEN' }, { status: 500 });
+  }
+
   let body: any;
   try {
     body = await req.json();
@@ -25,7 +34,10 @@ export async function POST(req: Request) {
   try {
     const upstreamRes = await fetch(`${UPSTREAM_BASE}/api/auth/local`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${AUTH_TOKEN}`
+      },
       body: JSON.stringify({ identifier, password }),
       cache: 'no-store'
     });
