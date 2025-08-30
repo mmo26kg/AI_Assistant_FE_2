@@ -1,5 +1,11 @@
 # KATCHX - AI Assistant Brand Guide
 
+**Tags:** #brand #design #guidelines #katchx #ai-assistant
+
+**Related Files:**
+- [[README]] - Main project documentation
+- [[src/app/expense-expert/overview]] - Technical implementation details
+
 ## 🎯 Brand Identity
 
 ### Core Concept

@@ -2,6 +2,12 @@
 
 Một ứng dụng Next.js hiện đại được xây dựng với thiết kế UI/UX chuyên nghiệp và thẩm mỹ cao.
 
+**Tags:** #ai-assistant #frontend #nextjs #typescript #documentation
+
+**Related Files:**
+- [[brand-guidelines]] - Brand and design guidelines  
+- [[src/app/expense-expert/overview]] - Expense Expert module documentation
+
 ## 🎨 Tính năng thiết kế
 
 - ✨ **Thiết kế tối giản** với bảng màu trung tính và accent màu violet

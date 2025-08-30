@@ -1,0 +1,43 @@
+{
+  "plugins/graph/color-groups": [],
+  "plugins/graph/collapse-forces": true,
+  "plugins/graph/node-size-forces": true,
+  "plugins/graph/link-forces": true,
+  "plugins/graph/link-distance": 250,
+  "plugins/graph/repel-force": 10,
+  "plugins/graph/center-force": 3,
+  "plugins/graph/node-size": 2,
+  "plugins/graph/link-thickness": 1,
+  "plugins/graph/animate": true,
+  "plugins/graph/show-tags": false,
+  "plugins/graph/show-attachments": false,
+  "plugins/graph/hideUnresolved": false,
+  "plugins/daily-notes/folder": "",
+  "plugins/daily-notes/format": "YYYY-MM-DD",
+  "plugins/daily-notes/template": "",
+  "plugins/templates/folder": "Templates",
+  "plugins/word-count/show-word-count": true,
+  "plugins/word-count/show-character-count": true,
+  "plugins/starred/starred": [
+    {
+      "type": "file",
+      "title": "Knowledge Base Index",
+      "path": "Index.md"
+    },
+    {
+      "type": "file",
+      "title": "README",
+      "path": "README.md"
+    },
+    {
+      "type": "file", 
+      "title": "Brand Guidelines",
+      "path": "brand-guidelines.md"
+    },
+    {
+      "type": "file",
+      "title": "Expense Expert Overview", 
+      "path": "src/app/expense-expert/overview.md"
+    }
+  ]
+}
