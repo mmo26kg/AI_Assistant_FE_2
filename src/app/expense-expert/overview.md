@@ -1,5 +1,11 @@
 # Expense Expert Module Overview
 
+**Tags:** #expense-expert #module #architecture #ai-assistant #technical-docs
+
+**Related Files:**
+- [[README]] - Main project documentation
+- [[brand-guidelines]] - Design and brand guidelines
+
 ## 1. Purpose
 A modular AI-assisted expense tracking interface enabling natural language input, automated tool call extraction, categorized visualization, and quick manual additions.
 

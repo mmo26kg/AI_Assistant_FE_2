@@ -1,0 +1,27 @@
+{
+  "id": "c4a925b18d8b43ad",
+  "mainWorkspace": {
+    "active": "5a92a0a71d7f6d17",
+    "lastOpenFiles": [
+      "README.md",
+      "brand-guidelines.md", 
+      "src/app/expense-expert/overview.md"
+    ]
+  },
+  "workspaces": {
+    "Development": {
+      "active": "5a92a0a71d7f6d17",
+      "lastOpenFiles": [
+        "src/app/expense-expert/overview.md",
+        "README.md"
+      ]
+    },
+    "Documentation": {
+      "active": "5a92a0a71d7f6d17", 
+      "lastOpenFiles": [
+        "README.md",
+        "brand-guidelines.md"
+      ]
+    }
+  }
+}

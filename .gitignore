@@ -39,3 +39,12 @@ next-env.d.ts
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# Obsidian
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+.obsidian/plugins/
+.obsidian/hotkeys.json
+.obsidian/appearance.json
+.obsidian/graph.json
